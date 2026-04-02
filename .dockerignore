@@ -1,0 +1,25 @@
+# Build artifacts
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.a
+*.o
+subconverter
+
+# Cache directory
+cache/
+
+# Git
+.git/
+.gitignore
+.gitmodules
+
+# IDE / OS
+.vscode/
+.idea/
+*.DS_Store
+Thumbs.db
+
+# Logs
+*.log
