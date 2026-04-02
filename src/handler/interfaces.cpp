@@ -43,6 +43,24 @@ std::string parseProxy(const std::string &source)
     return proxy;
 }
 
+std::string parseProxyForUrl(const std::string &url)
+{
+    // If a GitHub-specific proxy is configured, use it for all GitHub URLs
+    if(!global.proxyGitHub.empty())
+    {
+        if(startsWith(url, "https://github.com/") ||
+           startsWith(url, "http://github.com/") ||
+           startsWith(url, "https://api.github.com/") ||
+           startsWith(url, "https://raw.githubusercontent.com/") ||
+           startsWith(url, "https://gist.githubusercontent.com/") ||
+           startsWith(url, "https://codeload.github.com/"))
+        {
+            return parseProxy(global.proxyGitHub);
+        }
+    }
+    return "";
+}
+
 extern string_array ClashRuleTypes, SurgeRuleTypes, QuanXRuleTypes;
 
 struct UAProfile

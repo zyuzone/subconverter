@@ -8,6 +8,7 @@
 #include "server/webserver.h"
 #include "utils/logger.h"
 #include "utils/network.h"
+#include "utils/system.h"
 #include "interfaces.h"
 #include "multithread.h"
 #include "settings.h"
@@ -338,6 +339,7 @@ void readYAMLConf(YAML::Node &node)
     section["proxy_config"] >> global.proxyConfig;
     section["proxy_ruleset"] >> global.proxyRuleset;
     section["proxy_subscription"] >> global.proxySubscription;
+    section["proxy_github"] >> global.proxyGitHub;
     section["reload_conf_on_request"] >> global.reloadConfOnRequest;
 
     if(node["userinfo"].IsDefined())
@@ -563,6 +565,12 @@ void readYAMLConf(YAML::Node &node)
         node["advanced"]["async_fetch_ruleset"] >> global.asyncFetchRuleset;
         node["advanced"]["skip_failed_links"] >> global.skipFailedLinks;
     }
+    // Environment variable overrides for proxy settings (takes precedence over config file)
+    {
+        std::string env_proxy = getEnv("GITHUB_PROXY");
+        if (!env_proxy.empty())
+            global.proxyGitHub = env_proxy;
+    }
     writeLog(0, "Load preference settings in YAML format completed.", LOG_LEVEL_INFO);
 }
 
@@ -614,6 +622,7 @@ void readTOMLConf(toml::value &root)
                   "proxy_config", global.proxyConfig,
                   "proxy_ruleset", global.proxyRuleset,
                   "proxy_subscription", global.proxySubscription,
+                  "proxy_github", global.proxyGitHub,
                   "append_proxy_type", global.appendType,
                   "reload_conf_on_request", global.reloadConfOnRequest
     );
@@ -780,6 +789,12 @@ void readTOMLConf(toml::value &root)
         global.cacheSubscription = global.cacheConfig = global.cacheRuleset = 0;
     }
 
+    // Environment variable overrides for proxy settings (takes precedence over config file)
+    {
+        std::string env_proxy = getEnv("GITHUB_PROXY");
+        if (!env_proxy.empty())
+            global.proxyGitHub = env_proxy;
+    }
     writeLog(0, "Load preference settings in TOML format completed.", LOG_LEVEL_INFO);
 }
 
@@ -858,6 +873,7 @@ void readConf()
     ini.get_if_exist("proxy_config", global.proxyConfig);
     ini.get_if_exist("proxy_ruleset", global.proxyRuleset);
     ini.get_if_exist("proxy_subscription", global.proxySubscription);
+    ini.get_if_exist("proxy_github", global.proxyGitHub);
     ini.get_bool_if_exist("reload_conf_on_request", global.reloadConfOnRequest);
 
     if(ini.section_exist("surge_external_proxy"))
@@ -1070,6 +1086,13 @@ void readConf()
     ini.get_bool_if_exist("script_clean_context", global.scriptCleanContext);
     ini.get_bool_if_exist("async_fetch_ruleset", global.asyncFetchRuleset);
     ini.get_bool_if_exist("skip_failed_links", global.skipFailedLinks);
+
+    // Environment variable overrides for proxy settings (takes precedence over config file)
+    {
+        std::string env_proxy = getEnv("GITHUB_PROXY");
+        if (!env_proxy.empty())
+            global.proxyGitHub = env_proxy;
+    }
 
     writeLog(0, "Load preference settings in INI format completed.", LOG_LEVEL_INFO);
 }

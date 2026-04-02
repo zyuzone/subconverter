@@ -49,7 +49,7 @@ struct Settings
     bool enableSort = false, updateStrict = false;
     bool clashUseNewField = false, singBoxAddClashModes = true;
     std::string clashProxiesStyle = "flow", clashProxyGroupsStyle = "block";
-    std::string proxyConfig, proxyRuleset, proxySubscription;
+    std::string proxyConfig, proxyRuleset, proxySubscription, proxyGitHub;
     int updateInterval = 0;
     std::string sortScript, filterScript;
 

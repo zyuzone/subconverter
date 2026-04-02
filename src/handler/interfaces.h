@@ -10,6 +10,7 @@
 #include "server/webserver.h"
 
 std::string parseProxy(const std::string &source);
+std::string parseProxyForUrl(const std::string &url);
 
 void refreshRulesets(RulesetConfigs &ruleset_list, std::vector<RulesetContent> &rca);
 void readConf();
