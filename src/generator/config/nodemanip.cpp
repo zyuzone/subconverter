@@ -139,10 +139,29 @@ int addNodes(std::string link, std::vector<Proxy> &allNodes, int groupID, parse_
     switch(linkType)
     {
     case ConfType::SUB:
+    {
         writeLog(LOG_TYPE_INFO, "Downloading subscription data...");
-        if(startsWith(link, "surge:///install-config")) //surge config link
+        if(startsWith(link, "surge:///install-config"))
             link = urlDecode(getUrlArg(link, "url"));
-        strSub = webGet(link, proxy, global.cacheSubscription, &extra_headers, request_headers);
+        string_icase_map filtered_headers;
+        if(request_headers)
+        {
+            static const string_array blocked_headers = {
+                "x-forwarded-for", "x-real-ip", "x-forwarded-proto",
+                "x-forwarded-host", "remote-host", "forwarded",
+                "cf-connecting-ip", "true-client-ip"
+            };
+            for(auto &kv : *request_headers)
+            {
+                std::string key_lower = toLower(kv.first);
+                bool blocked = false;
+                for(auto &bh : blocked_headers)
+                    if(key_lower == bh) { blocked = true; break; }
+                if(!blocked)
+                    filtered_headers[kv.first] = kv.second;
+            }
+        }
+        strSub = webGet(link, proxy, global.cacheSubscription, &extra_headers, request_headers ? &filtered_headers : nullptr);
         /*
         if(strSub.size() == 0)
         {
@@ -189,6 +208,7 @@ int addNodes(std::string link, std::vector<Proxy> &allNodes, int groupID, parse_
             return -1;
         }
         break;
+    }
     case ConfType::Local:
         if(!authorized)
             return -1;
