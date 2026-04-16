@@ -174,6 +174,23 @@ int main(int argc, char *argv[])
     if(!env_token.empty())
         global.accessToken = env_token;
 
+    std::string env_global_proxy = getEnv("GLOBAL_PROXY");
+    std::string env_proxy_config = getEnv("PROXY_CONFIG");
+    std::string env_proxy_ruleset = getEnv("PROXY_RULESET");
+    std::string env_proxy_subscription = getEnv("PROXY_SUBSCRIPTION");
+    if(!env_global_proxy.empty())
+    {
+        global.proxyConfig = env_global_proxy;
+        global.proxyRuleset = env_global_proxy;
+        global.proxySubscription = env_global_proxy;
+    }
+    if(!env_proxy_config.empty())
+        global.proxyConfig = env_proxy_config;
+    if(!env_proxy_ruleset.empty())
+        global.proxyRuleset = env_proxy_ruleset;
+    if(!env_proxy_subscription.empty())
+        global.proxySubscription = env_proxy_subscription;
+
     if(global.generatorMode)
         return simpleGenerator();
 
